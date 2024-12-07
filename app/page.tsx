@@ -85,6 +85,7 @@ export default function NeedSlidersLite() {
 
   return (
     <div className="min-h-screen bg-black text-cyan-100 p-6 flex flex-col items-center">
+      <h4>need-meter.netlify.com</h4>
       <div className="w-full max-w-sm space-y-6 mb-8">
         {sliders.map(slider => (
           <div
