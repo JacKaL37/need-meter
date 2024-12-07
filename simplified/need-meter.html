@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Need Meter</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <style>
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+    }
+    .text-balance {
+      text-wrap: balance;
+    }
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+      }
+      to {
+        opacity: 1;
+      }
+    }
+    .animate-fadeIn {
+      animation: fadeIn 0.5s ease-in-out forwards;
+    }
+  </style>
+</head>
+<body class="min-h-screen bg-black text-cyan-100 p-6 flex flex-col items-center">
+  <div id="app" class="w-full max-w-sm space-y-6 mb-8"></div>
+  <button @click="addSlider" class="mt-4 text-cyan-300 opacity-50 hover:opacity-100 transition-opacity duration-300 ease-in-out" aria-label="Add new slider">
+    <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+    </svg>
+  </button>
+  <script src="https://unpkg.com/vue@next"></script>
+  <script>
+    const { createApp, ref, reactive, onMounted } = Vue;
+
+    createApp({
+      setup() {
+        const sliders = reactive(JSON.parse(localStorage.getItem('sliders')) || [
+          { id: 1, label: 'sleep', value: 3, color: '#cc00cc' },
+          { id: 2, label: 'exercise', value: 2, color: '#00cccc' },
+          { id: 3, label: 'nutrition', value: 4, color: '#6B00a2' },
+          { id: 4, label: 'social', value: 3, color: '#DE3163' },
+        ]);
+
+        const saveSliders = () => {
+          localStorage.setItem('sliders', JSON.stringify(sliders));
+        };
+
+        const updateSliderValue = (id, newValue) => {
+          const slider = sliders.find(slider => slider.id === id);
+          if (slider) {
+            slider.value = Math.max(0, Math.min(5, newValue));
+            saveSliders();
+          }
+        };
+
+        const updateSliderLabel = (id, newLabel) => {
+          const slider = sliders.find(slider => slider.id === id);
+          if (slider) {
+            slider.label = newLabel;
+            saveSliders();
+          }
+        };
+
+        const updateSliderColor = (id, newColor) => {
+          const slider = sliders.find(slider => slider.id === id);
+          if (slider) {
+            slider.color = newColor;
+            saveSliders();
+          }
+        };
+
+        const deleteSlider = (id) => {
+          const index = sliders.findIndex(slider => slider.id === id);
+          if (index !== -1) {
+            sliders.splice(index, 1);
+            saveSliders();
+          }
+        };
+
+        const addSlider = () => {
+          if (sliders.length < 16) {
+            const newId = Math.max(...sliders.map(s => s.id)) + 1;
+            sliders.push({ id: newId, label: `[need ${newId}]`, value: 3, color: getRandomHexColor() });
+            saveSliders();
+          }
+        };
+
+        const getRandomHexColor = () => {
+          const randomChannel = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
+          const r = randomChannel(0, 255);
+          const g = randomChannel(0, 255);
+          const b = randomChannel(0, 255);
+          return `#${((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1)}`;
+        };
+
+        return {
+          sliders,
+          updateSliderValue,
+          updateSliderLabel,
+          updateSliderColor,
+          deleteSlider,
+          addSlider,
+        };
+      },
+      template: `
+        <div>
+          <div v-for="slider in sliders" :key="slider.id" class="transition-opacity duration-500 ease-in-out opacity-0 animate-fadeIn">
+            <div :id="'need-' + slider.id" class="flex items-center space-x-2">
+              <div class="flex-grow">
+                <div class="flex items-center shadow-xl">
+                  <button @click="updateSliderValue(slider.id, slider.value - 1)" class="text-2xl w-8 h-12 flex items-center justify-center bg-indigo-700 hover:bg-indigo-600 rounded-l-full transition-colors" :style="{ backgroundColor: slider.color, textShadow: '0 0 4px black' }">-</button>
+                  <div class="flex-1 h-12 bg-indigo-950 relative">
+                    <div class="h-full transition-all duration-300 ease-in-out" :style="{ width: (slider.value / 5) * 100 + '%', backgroundColor: slider.color }"></div>
+                    <div class="flex-grow absolute inset-0 flex items-center justify-center z-10">
+                      <input type="text" v-model="slider.label" class="bg-indigo-700 text-cyan-100 p-1 bg-opacity-50 font-mono rounded text-center w-full max-w-[90%]" />
+                    </div>
+                  </div>
+                  <button @click="updateSliderValue(slider.id, slider.value + 1)" class="text-2xl w-8 h-12 flex items-center justify-center bg-indigo-700 hover:bg-indigo-600 rounded-r-full transition-colors" :style="{ backgroundColor: slider.color, textShadow: '0 0 4px black' }">+</button>
+                </div>
+              </div>
+              <div class="relative">
+                <button @click="slider.showPopover = !slider.showPopover" class="text-cyan-300 hover:text-cyan-100 transition-colors" aria-label="More options">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v.01M12 12v.01M12 18v.01" />
+                  </svg>
+                </button>
+                <div v-if="slider.showPopover" class="absolute right-0 mt-2 w-40 p-2 bg-white rounded shadow-lg">
+                  <div class="flex flex-col space-y-2">
+                    <label class="flex items-center space-x-2">
+                      <span>Color:</span>
+                      <input type="color" v-model="slider.color" class="w-6 h-6 rounded-full cursor-pointer" />
+                    </label>
+                    <button @click="deleteSlider(slider.id)" class="flex items-center space-x-2 text-red-500 hover:text-red-400 transition-colors">
+                      <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                      </svg>
+                      <span>Delete</span>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      `,
+    }).mount('#app');
+  </script>
+</body>
+</html>

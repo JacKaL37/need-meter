@@ -1,101 +1,116 @@
-import Image from "next/image";
+'use client'
 
-export default function Home() {
-  return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="https://nextjs.org/icons/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-semibold">
-              app/page.tsx
-            </code>
-            .
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
+import { useState, useEffect } from 'react'
+import { Slider } from '@/components/slider'
+import { PlusCircle } from 'lucide-react'
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="https://nextjs.org/icons/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:min-w-44"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
-        </div>
-      </main>
-      <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
-    </div>
-  );
+interface SliderType {
+  id: number
+  label: string
+  value: number
+  color: string
 }
+
+export default function NeedSlidersLite() {
+  const [sliders, setSliders] = useState<SliderType[]>([])
+
+  useEffect(() => {
+    const defaultSliders: SliderType[] = [
+      { id: 1, label: 'sleep', value: 3, color: '#cc00cc' }, // fuchsia
+      { id: 2, label: 'exercise', value: 2, color: '#00cccc' }, // cyan
+      { id: 3, label: 'nutrition', value: 4, color: '#6B00a2' }, // indigo
+      { id: 4, label: 'social', value: 3, color: '#DE3163' }, // cerise
+    ]
+
+    const storedSliders = localStorage.getItem('sliders')
+    if (storedSliders) {
+      setSliders(JSON.parse(storedSliders))
+    } else {
+      setSliders(defaultSliders)
+    }
+  }, [])
+
+  const handleSliderChange = (id: number, newValue: number) => {
+    const updatedSliders = sliders.map(slider => 
+      slider.id === id ? { ...slider, value: newValue } : slider
+    )
+    setSliders(updatedSliders)
+    localStorage.setItem('sliders', JSON.stringify(updatedSliders))
+  }
+
+  const handleLabelChange = (id: number, newLabel: string) => {
+    const updatedSliders = sliders.map(slider => 
+      slider.id === id ? { ...slider, label: newLabel } : slider
+    )
+    setSliders(updatedSliders)
+    localStorage.setItem('sliders', JSON.stringify(updatedSliders))
+  }
+
+  const handleColorChange = (id: number, newColor: string) => {
+    const updatedSliders = sliders.map(slider => 
+      slider.id === id ? { ...slider, color: newColor } : slider
+    )
+    setSliders(updatedSliders)
+    localStorage.setItem('sliders', JSON.stringify(updatedSliders))
+  }
+
+  const deleteSlider = (id: number) => {
+    const updatedSliders = sliders.filter(slider => slider.id !== id)
+    setSliders(updatedSliders)
+    localStorage.setItem('sliders', JSON.stringify(updatedSliders))
+  }
+
+  const addSlider = () => {
+    if (sliders.length < 16) {
+      const newId = Math.max(...sliders.map(s => s.id)) + 1
+      const updatedSliders = [...sliders, { id: newId, label: `[need ${newId}]`, value: 3, color: getRandomHexColor() }]
+      setSliders(updatedSliders)
+      localStorage.setItem('sliders', JSON.stringify(updatedSliders))
+    }
+  }
+  
+  const getRandomHexColor = (rMin = 0, rMax = 255, gMin = 0, gMax = 255, bMin = 0, bMax = 255) => {
+    // helper function to get a random number between min and max
+    const randomChannel = (min: number, max: number) => Math.floor(Math.random() * (max - min + 1)) + min
+
+    // get random values for each color channel
+    const r = randomChannel(rMin, rMax)
+    const g = randomChannel(gMin, gMax)
+    const b = randomChannel(bMin, bMax)
+
+    // convert to hex and return the color
+    return `#${((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1)}`
+  }
+
+
+  return (
+    <div className="min-h-screen bg-black text-cyan-100 p-6 flex flex-col items-center">
+      <div className="w-full max-w-sm space-y-6 mb-8">
+        {sliders.map(slider => (
+          <div
+            key={slider.id}
+            className="transition-opacity duration-500 ease-in-out opacity-0 animate-fadeIn"
+          >
+            <Slider
+              {...slider}
+              onChange={(newValue) => handleSliderChange(slider.id, newValue)}
+              onLabelChange={(newLabel) => handleLabelChange(slider.id, newLabel)}
+              onColorChange={(newColor) => handleColorChange(slider.id, newColor)}
+              onDelete={() => deleteSlider(slider.id)}
+            />
+          </div>
+        ))}
+      </div>
+      {sliders.length < 16 && (
+        <button
+          onClick={addSlider}
+          className="mt-4 text-cyan-300 opacity-50 hover:opacity-100 transition-opacity duration-300 ease-in-out"
+          aria-label="Add new slider"
+        >
+          <PlusCircle size={40} />
+        </button>
+      )}
+    </div>
+  )
+}
+
