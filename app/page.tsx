@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { Slider } from "@/components/slider";
-import { PlusCircle, Code } from "lucide-react";
+import { PlusCircle } from "lucide-react";
 import Image from "next/image";
 
 interface SliderType {
@@ -21,6 +21,7 @@ export default function NeedSlidersLite() {
       { id: 2, label: "exercise", value: 2, color: "#00cccc" }, // cyan
       { id: 3, label: "nutrition", value: 4, color: "#6B00a2" }, // indigo
       { id: 4, label: "social", value: 3, color: "#DE3163" }, // cerise
+      { id: 5, label: "[tap to edit]", value: 0, color: "#cccccc" }, // cerise
     ];
 
     const storedSliders = localStorage.getItem("sliders");
