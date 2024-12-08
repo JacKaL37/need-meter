@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { Slider } from "@/components/slider";
-import { PlusCircle } from "lucide-react";
+import { PlusCircle, Coffee } from "lucide-react";
 import Image from "next/image";
 
 interface SliderType {
@@ -11,6 +11,8 @@ interface SliderType {
   value: number;
   color: string;
 }
+
+//https://account.venmo.com/payment-link?audience=friends&amount=1.00&note=as%20thanks%20for%20developing%20need-meter%20%F0%9F%92%9E&recipients=%2CJohn-K-Lindstedt&txn=pay
 
 export default function NeedSlidersLite() {
   const [sliders, setSliders] = useState<SliderType[]>([]);
@@ -21,7 +23,7 @@ export default function NeedSlidersLite() {
       { id: 2, label: "exercise", value: 2, color: "#00cccc" }, // cyan
       { id: 3, label: "nutrition", value: 4, color: "#6B00a2" }, // indigo
       { id: 4, label: "social", value: 3, color: "#DE3163" }, // cerise
-      { id: 5, label: "[tap to edit]", value: 0, color: "#cccccc" }, // cerise
+      { id: 5, label: "[tap to edit]", value: 0, color: "#2200cc" }, // deep blue
     ];
 
     const storedSliders = localStorage.getItem("sliders");
@@ -128,6 +130,14 @@ export default function NeedSlidersLite() {
             }
             className="cursor-pointer opacity-60"
           />
+        </div>
+        <div className="flex font-mono pl-4 mb-4">
+          <Coffee 
+          onClick={() =>
+            window.open("https://account.venmo.com/payment-link?audience=friends&amount=1.00&note=☕ as thanks for developing need-meter 💞&recipients=%2CJohn-K-Lindstedt&txn=pay", "_blank")
+          }
+          size={24}
+          className="text-fuchsia-500 cursor-pointer opacity-60" />
         </div>
       </div>
       <div className="w-full max-w-sm space-y-6 mb-8">

@@ -43,7 +43,7 @@ export function Slider({ id, label, value, color, onChange, onLabelChange, onCol
           >
             -
           </button>
-          <div className="flex-1 h-12 bg-indigo-950 relative">
+          <div className="flex-1 h-12 bg-gray-900 relative">
             <div
               className="h-full transition-all duration-300 ease-in-out"
               style={{ width: `${(value / 5) * 100}%`, backgroundColor: color }}
@@ -82,29 +82,27 @@ export function Slider({ id, label, value, color, onChange, onLabelChange, onCol
       <Popover>
         <PopoverTrigger asChild>
           <button
-            className="text-cyan-300 hover:text-cyan-100 transition-colors"
+            className="text-cyan-300 hover:text-cyan-100 transition-colors pl-1"
             aria-label="More options"
           >
             <MoreVertical size={20} />
           </button>
         </PopoverTrigger>
-        <PopoverContent className="w-40 p-2">
-          <div className="flex flex-col space-y-2">
-            <label className="flex items-center space-x-2">
-              <span>Color:</span>
+        <PopoverContent className="w-16 p-2 bg-gray-800 border-none">
+          <div className="flex flex-col items-center space-y-2 pt-4">
+            <label className="flex items-center border-none space-x-2 pb-2">
               <input
-                type="color"
-                value={color}
-                onChange={(e) => onColorChange(e.target.value)}
-                className="w-6 h-6 rounded-full cursor-pointer"
+          type="color"
+          value={color}
+          onChange={(e) => onColorChange(e.target.value)}
+          className="w-10 h-10 rounded-full border-none cursor-pointer bg-none"
               />
             </label>
             <button
               onClick={onDelete}
-              className="flex items-center space-x-2 text-red-500 hover:text-red-400 transition-colors"
+              className="flex items-center space-x-2 text-red-500 hover:text-red-400 transition-colors pb-4"
             >
-              <Trash2 size={16} />
-              <span>Delete</span>
+              <Trash2 className="bg-gray-900 rounded-full p-2" size={42} />
             </button>
           </div>
         </PopoverContent>
